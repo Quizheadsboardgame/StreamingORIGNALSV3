@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #0CC0DF; /* Background color */
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 40%;
+            max-width: 800px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Shadow */
+            padding: 20px;
+        }
+        img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 5px solid #0CC0DF; /* Outer blue border color */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .qa-box {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .question {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .answer {
+            font-size: 1.2em;
+            color: #555;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); /* Text shadow */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img id="quizImage" src="https://i.imgur.com/OOnO7zj.png" alt="Quiz Image">
+        <div class="qa-box">
+            <div id="question" class="question">Click the image to get a question!</div>
+            <div id="answer" class="answer"></div>
+        </div>
+    </div>
+    
+    <script>
+        const questionsAndAnswers = [
+            { question: "What is the name of the Netflix original series about a group of kids in the 1980s dealing with supernatural occurrences?", answer: "Stranger Things" },
+            { question: "Which Amazon Prime series follows the adventures of a group of vigilantes who fight against corrupt superheroes?", answer: "The Boys" },
+            { question: "What is the title of the HBO Max series set in a dystopian future where humans can upload their consciousness into a digital afterlife?", answer: "Upload" },
+            { question: "Which Netflix original movie stars Charlize Theron as an immortal mercenary with a team of similar individuals?", answer: "The Old Guard" },
+            { question: "What is the name of the Apple TV+ series that features a reimagining of the classic 'Dickinson' poet's life?", answer: "Dickinson" },
+            { question: "Which Disney+ series explores the adventures of the Star Wars character Boba Fett after the events of 'Return of the Jedi'?", answer: "The Book of Boba Fett" },
+            { question: "What Netflix original series revolves around a group of young adults navigating high school while dealing with supernatural elements?", answer: "Chilling Adventures of Sabrina" },
+            { question: "Which Hulu original series is based on the true crime story of a woman who orchestrated her husband's murder?", answer: "The Act" },
+            { question: "What is the title of the Netflix animated series created by Matt Groening that blends fantasy and comedy in a medieval setting?", answer: "Disenchantment" },
+            { question: "Which HBO series is set in a world where reality TV stars are the main characters in a dystopian version of our world?", answer: "The White Lotus" },
+            { question: "What is the name of the Prime Video series based on the popular 'The Lord of the Rings' universe, set in the Second Age of Middle-earth?", answer: "The Lord of the Rings: The Rings of Power" },
+            { question: "Which Netflix original drama series follows the lives of a group of teenagers who get superpowers after a strange event at their high school?", answer: "The Umbrella Academy" },
+            { question: "What is the name of the Apple TV+ series that chronicles the life and career of a female soccer coach in the UK?", answer: "Ted Lasso" },
+            { question: "Which Disney+ original series explores the adventures of the Marvel character Loki after the events of 'Avengers: Endgame'?", answer: "Loki" },
+            { question: "What is the title of the HBO series that features a futuristic world where guests can live out their darkest fantasies in a high-tech theme park?", answer: "Westworld" },
+            { question: "Which Netflix original series focuses on a high school teacher who becomes a vigilante hero in a city plagued by crime?", answer: "The Defenders" },
+            { question: "What is the name of the Hulu series that follows the story of a woman who decides to enter the world of amateur boxing to improve her life?", answer: "The Great" },
+            { question: "Which Apple TV+ series explores the lives of a group of friends in a small town dealing with various personal and professional challenges?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "What is the title of the Netflix documentary series that examines the lives of people living in extreme weather conditions around the world?", answer: "Our Planet" },
+            { question: "Which Disney+ series is set in the Marvel Cinematic Universe and follows Wanda Maximoff and Vision living an ideal suburban life?", answer: "WandaVision" },
+            { question: "What is the name of the Amazon Prime series that features a world where humans and creatures coexist, and follows the adventures of a half-human, half-elf heroine?", answer: "The Wheel of Time" },
+            { question: "Which Netflix original film stars Ryan Reynolds as a time-traveling pilot who teams up with his younger self to save the future?", answer: "The Adam Project" },
+            { question: "What is the title of the Hulu original series that follows the lives of an elite group of high school students in a wealthy neighborhood?", answer: "Pam & Tommy" },
+            { question: "Which HBO Max series focuses on the behind-the-scenes drama of a fictional high-profile morning news show?", answer: "The Morning Show" },
+            { question: "What is the name of the Netflix original series that centers around a private investigator trying to solve the murder of a missing girl?", answer: "Mindhunter" },
+            { question: "Which Amazon Prime series is based on the book series about a young girl who discovers she has magical abilities and attends a special academy?", answer: "The Magicians" },
+            { question: "What is the title of the Disney+ animated series that features a young woman who discovers she has inherited the ability to control magical forces?", answer: "The Owl House" },
+            { question: "Which Apple TV+ series follows the lives of a group of employees at a fictional tech company and their daily adventures and challenges?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "What is the name of the Netflix original movie that features an ensemble cast of superheroes teaming up to fight a global threat?", answer: "The Old Guard" },
+            { question: "Which Hulu series is based on the true story of a woman who used her daughter’s illness to gain attention and financial benefits?", answer: "The Act" },
+            { question: "What is the title of the HBO series that explores the world of a high-powered attorney and her personal and professional challenges?", answer: "Big Little Lies" },
+            { question: "Which Netflix original series follows a group of teenagers who discover they have superpowers and must navigate their lives and responsibilities?", answer: "The Umbrella Academy" },
+            { question: "What is the name of the Apple TV+ series that features a comedic portrayal of the life of a sports coach in a small town?", answer: "Ted Lasso" },
+            { question: "Which Disney+ series follows the adventures of a young orphan who discovers she has magical abilities and must navigate a secret world of witches?", answer: "The Owl House" },
+            { question: "What is the title of the HBO Max series that centers around a high-powered lawyer who is trying to balance her demanding career with her personal life?", answer: "The Undoing" },
+            { question: "Which Amazon Prime series features a story about a superhero team fighting against evil forces in a futuristic world?", answer: "The Boys" },
+            { question: "What is the name of the Netflix original film that explores the lives of a group of friends during a pivotal moment in their lives?", answer: "The Half of It" },
+            { question: "Which Hulu original series follows the story of a woman who starts a podcast to investigate unsolved crimes in her small town?", answer: "Only Murders in the Building" },
+            { question: "What is the title of the Disney+ series that explores the adventures of a young space ranger and his friends as they battle evil forces?", answer: "Star Wars: The Bad Batch" },
+            { question: "Which Apple TV+ series features a group of high school students who form a band and navigate the challenges of adolescence and music?", answer: "Swagger" },
+            { question: "What is the name of the Netflix original series that explores the life of a young woman trying to make a name for herself in the fashion industry?", answer: "Emily in Paris" },
+            { question: "Which HBO series is set in a future where humans can upload their consciousness to a digital afterlife?", answer: "Upload" },
+            { question: "What is the title of the Amazon Prime series that follows a group of adventurers who discover a hidden world full of magical creatures?", answer: "The Wheel of Time" },
+            { question: "Which Disney+ series is a spin-off of the 'Star Wars' franchise, focusing on the character of Ahsoka Tano?", answer: "Ahsoka" },
+            { question: "What is the name of the Netflix original movie that features a young woman trying to balance her professional life with personal aspirations?", answer: "Someone Great" },
+            { question: "Which Hulu series follows the lives of a group of friends who run a small bar and deal with the ups and downs of their personal and professional lives?", answer: "How I Met Your Father" },
+            { question: "What is the title of the Apple TV+ series that features a comedic portrayal of a group of friends who work in a tech company?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "Which HBO Max series focuses on the life of a young woman who inherits a struggling business and tries to turn it around?", answer: "Hacks" },
+            { question: "What is the name of the Netflix original series that follows a group of friends who find themselves caught up in a series of supernatural events?", answer: "The Midnight Club" },
+            { question: "Which Amazon Prime series features a world where humans and mythological creatures coexist, and follows the adventures of a young hero?", answer: "The Lord of the Rings: The Rings of Power" },
+            { question: "What is the title of the Disney+ series that explores the adventures of a young woman who discovers she has magical powers?", answer: "The Owl House" },
+            { question: "Which Apple TV+ series follows the lives of a group of high school students navigating the ups and downs of teenage life?", answer: "Dickinson" },
+            { question: "What is the name of the Netflix original film that features an ensemble cast of characters trying to solve a complex mystery?", answer: "Knives Out" },
+            { question: "Which Hulu series focuses on the life of a young woman trying to balance her career ambitions with her personal relationships?", answer: "How I Met Your Father" },
+            { question: "What is the title of the HBO series that explores the world of a group of high-profile lawyers and their personal and professional challenges?", answer: "Big Little Lies" },
+            { question: "Which Amazon Prime series follows the story of a young woman who discovers she has supernatural abilities and must navigate a secret world of magic?", answer: "The Magicians" },
+            { question: "What is the name of the Disney+ series that features a young woman navigating the magical world of witches and wizards?", answer: "The Owl House" },
+            { question: "Which Apple TV+ series follows a young woman who starts a new job and navigates the challenges of her professional and personal life?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "What is the title of the Netflix original series that centers around a group of friends who discover they have superpowers and must deal with the consequences?", answer: "The Umbrella Academy" },
+            { question: "Which Hulu original series explores the story of a woman who becomes a private investigator to solve a series of complex cases?", answer: "Only Murders in the Building" },
+            { question: "What is the name of the HBO Max series that features a dystopian future where humans can upload their consciousness to a digital afterlife?", answer: "Upload" },
+            { question: "Which Amazon Prime series follows the adventures of a group of heroes fighting against evil forces in a fantastical world?", answer: "The Wheel of Time" },
+            { question: "What is the title of the Disney+ series that features a young space ranger and his friends battling evil forces in a futuristic world?", answer: "Star Wars: The Bad Batch" },
+            { question: "Which Apple TV+ series features a comedic portrayal of a group of friends navigating the world of technology and entrepreneurship?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "What is the name of the Netflix original film that explores the life of a young woman trying to balance her career with her personal aspirations?", answer: "Someone Great" },
+            { question: "Which Hulu series follows the lives of a group of friends running a small bar and dealing with various personal and professional challenges?", answer: "How I Met Your Father" },
+            { question: "What is the title of the HBO series that explores the lives of high-powered lawyers and their personal and professional struggles?", answer: "Big Little Lies" },
+            { question: "Which Amazon Prime series follows a young woman discovering her magical abilities and navigating a secret world of fantasy?", answer: "The Magicians" },
+            { question: "What is the name of the Disney+ series that centers around a young woman who discovers she has inherited magical powers?", answer: "The Owl House" },
+            { question: "Which Apple TV+ series focuses on a young woman's adventures as she navigates her professional and personal life in the tech world?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "What is the title of the Netflix original series that follows a group of friends discovering they have superpowers and dealing with the consequences?", answer: "The Umbrella Academy" },
+            { question: "Which Hulu original series explores the life of a woman who becomes a private investigator to solve mysterious cases?", answer: "Only Murders in the Building" },
+            { question: "What is the name of the HBO Max series featuring a dystopian future where humans upload their consciousness to a digital afterlife?", answer: "Upload" },
+            { question: "Which Amazon Prime series features a group of heroes fighting against evil forces in a fantastical world?", answer: "The Wheel of Time" },
+            { question: "What is the title of the Disney+ series featuring a young space ranger and his friends battling evil forces?", answer: "Star Wars: The Bad Batch" },
+            { question: "Which Apple TV+ series features a comedic portrayal of a group of friends navigating the tech world?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "What is the name of the Netflix original film exploring the life of a young woman balancing career and personal aspirations?", answer: "Someone Great" },
+            { question: "Which Hulu series focuses on a group of friends running a bar and dealing with personal and professional challenges?", answer: "How I Met Your Father" },
+            { question: "What is the title of the HBO series that delves into the lives of high-powered lawyers dealing with personal and professional issues?", answer: "Big Little Lies" },
+            { question: "Which Amazon Prime series follows a young woman discovering her magical abilities in a secret fantasy world?", answer: "The Magicians" },
+            { question: "What is the name of the Disney+ series about a young woman who inherits magical powers?", answer: "The Owl House" },
+            { question: "Which Apple TV+ series features a young woman navigating her professional and personal life in the tech industry?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "What is the title of the Netflix original series about a group of friends discovering and dealing with superpowers?", answer: "The Umbrella Academy" },
+            { question: "Which Hulu original series features a woman who becomes a private investigator to solve complex cases?", answer: "Only Murders in the Building" },
+            { question: "What is the name of the HBO Max series set in a dystopian future where humans can upload their consciousness?", answer: "Upload" },
+            { question: "Which Amazon Prime series features a group of heroes fighting against evil forces in a magical world?", answer: "The Wheel of Time" },
+            { question: "What is the title of the Disney+ series featuring a young space ranger and his friends battling evil?", answer: "Star Wars: The Bad Batch" },
+            { question: "Which Apple TV+ series is a comedic portrayal of friends navigating technology and entrepreneurship?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "What is the name of the Netflix original film about a young woman balancing her career with personal goals?", answer: "Someone Great" },
+            { question: "Which Hulu series follows a group of friends running a small bar and facing personal and professional challenges?", answer: "How I Met Your Father" },
+            { question: "What is the title of the HBO series exploring the lives of high-powered lawyers and their struggles?", answer: "Big Little Lies" },
+            { question: "Which Amazon Prime series features a young woman discovering magical abilities and navigating a fantasy world?", answer: "The Magicians" },
+            { question: "What is the name of the Disney+ series about a young woman who inherits magical powers?", answer: "The Owl House" },
+            { question: "Which Apple TV+ series portrays a young woman's adventures in the tech world?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "What is the title of the Netflix series about friends discovering superpowers?", answer: "The Umbrella Academy" },
+            { question: "Which Hulu series focuses on a woman who becomes a private investigator to solve cases?", answer: "Only Murders in the Building" },
+            { question: "What is the name of the HBO Max series set in a dystopian future with digital afterlife?", answer: "Upload" },
+            { question: "Which Amazon Prime series features heroes fighting against evil in a magical world?", answer: "The Wheel of Time" },
+            { question: "What is the title of the Disney+ series about a young space ranger battling evil?", answer: "Star Wars: The Bad Batch" },
+            { question: "Which Apple TV+ series humorously portrays a group of friends navigating the tech industry?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "What is the name of the Netflix film about a young woman balancing career and personal life?", answer: "Someone Great" },
+            { question: "Which Hulu series features friends running a bar and facing various challenges?", answer: "How I Met Your Father" },
+            { question: "What is the title of the HBO series exploring high-powered lawyers and their struggles?", answer: "Big Little Lies" },
+            { question: "Which Amazon Prime series follows a young woman discovering magical abilities?", answer: "The Magicians" },
+            { question: "What is the name of the Disney+ series about a young woman with inherited magical powers?", answer: "The Owl House" },
+            { question: "Which Apple TV+ series shows a young woman's adventures in the tech industry?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "What is the title of the Netflix series about friends discovering superpowers?", answer: "The Umbrella Academy" },
+            { question: "Which Hulu series features a private investigator solving complex cases?", answer: "Only Murders in the Building" },
+            { question: "What is the name of the HBO Max series with a dystopian digital afterlife?", answer: "Upload" },
+            { question: "Which Amazon Prime series has heroes fighting evil in a magical world?", answer: "The Wheel of Time" },
+            { question: "What is the title of the Disney+ series about a space ranger battling evil?", answer: "Star Wars: The Bad Batch" },
+            { question: "Which Apple TV+ series humorously portrays friends in the tech industry?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "What is the name of the Netflix film about balancing career and personal life?", answer: "Someone Great" },
+            { question: "Which Hulu series shows friends running a bar and dealing with challenges?", answer: "How I Met Your Father" },
+            { question: "What is the title of the HBO series exploring high-powered lawyers and struggles?", answer: "Big Little Lies" },
+            { question: "Which Amazon Prime series features magical abilities and a fantasy world?", answer: "The Magicians" },
+            { question: "What is the name of the Disney+ series about inherited magical powers?", answer: "The Owl House" },
+            { question: "Which Apple TV+ series depicts a young woman's tech industry adventures?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "What is the title of the Netflix series featuring superpowers?", answer: "The Umbrella Academy" },
+            { question: "Which Hulu series features a private investigator solving cases?", answer: "Only Murders in the Building" },
+            { question: "What is the name of the HBO Max series set in a digital afterlife?", answer: "Upload" },
+            { question: "Which Amazon Prime series has heroes in a magical world?", answer: "The Wheel of Time" },
+            { question: "What is the title of the Disney+ series about a space ranger fighting evil?", answer: "Star Wars: The Bad Batch" },
+            { question: "Which Apple TV+ series humorously portrays friends in tech?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "What is the name of the Netflix film about balancing career and personal life?", answer: "Someone Great" },
+            { question: "Which Hulu series shows friends running a bar and dealing with challenges?", answer: "How I Met Your Father" },
+            { question: "What is the title of the HBO series about high-powered lawyers and struggles?", answer: "Big Little Lies" },
+            { question: "Which Amazon Prime series features magical abilities and fantasy?", answer: "The Magicians" },
+            { question: "What is the name of the Disney+ series about magical powers?", answer: "The Owl House" },
+            { question: "Which Apple TV+ series shows a young woman in the tech world?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "What is the title of the Netflix series about superpowers?", answer: "The Umbrella Academy" },
+            { question: "Which Hulu series features a private investigator solving cases?", answer: "Only Murders in the Building" },
+            { question: "What is the name of the HBO Max series set in a digital afterlife?", answer: "Upload" },
+            { question: "Which Amazon Prime series features heroes in a magical world?", answer: "The Wheel of Time" },
+            { question: "What is the title of the Disney+ series about a space ranger fighting evil?", answer: "Star Wars: The Bad Batch" },
+            { question: "Which Apple TV+ series humorously portrays tech industry friends?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "What is the name of the Netflix film about balancing career and life?", answer: "Someone Great" },
+            { question: "Which Hulu series shows friends running a bar and facing challenges?", answer: "How I Met Your Father" },
+            { question: "What is the title of the HBO series about high-powered lawyers?", answer: "Big Little Lies" },
+            { question: "Which Amazon Prime series features magical abilities and fantasy?", answer: "The Magicians" },
+            { question: "What is the name of the Disney+ series about inherited magical powers?", answer: "The Owl House" },
+            { question: "Which Apple TV+ series depicts tech industry adventures?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "What is the title of the Netflix series about superpowers?", answer: "The Umbrella Academy" },
+            { question: "Which Hulu series features a private investigator?", answer: "Only Murders in the Building" },
+            { question: "What is the name of the HBO Max series with a digital afterlife?", answer: "Upload" },
+            { question: "Which Amazon Prime series has heroes in a magical world?", answer: "The Wheel of Time" },
+            { question: "What is the title of the Disney+ series about a space ranger?", answer: "Star Wars: The Bad Batch" },
+            { question: "Which Apple TV+ series humorously portrays tech friends?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "What is the name of the Netflix film about balancing career?", answer: "Someone Great" },
+            { question: "Which Hulu series shows friends running a bar?", answer: "How I Met Your Father" },
+            { question: "What is the title of the HBO series about lawyers?", answer: "Big Little Lies" },
+            { question: "Which Amazon Prime series features magical fantasy?", answer: "The Magicians" },
+            { question: "What is the name of the Disney+ series about magical powers?", answer: "The Owl House" },
+            { question: "Which Apple TV+ series depicts tech industry life?", answer: "Mythic Quest: Raven's Banquet" },
+            { question: "What is the title of the Netflix series with superpowers?", answer: "The Umbrella Academy" },
+            { question: "Which Hulu series features a private investigator?", answer: "Only Murders in the Building" },
+            { question: "What is the name of the HBO Max series with a digital afterlife?", answer: "Upload" },
+            { question: "Which Amazon Prime series features magical worlds?", answer: "The Wheel of Time" },
+            { question: "What is the title of the Disney+ series about space rangers?", answer: "Star Wars: The Bad Batch" },
+            { question: "Which Apple TV+ series humorously shows tech industry friends?", answer: "Mythic Quest: Raven's Banquet" }
+        ];
+
+        const quizImage = document.getElementById('quizImage');
+        const questionElement = document.getElementById('question');
+        const answerElement = document.getElementById('answer');
+
+        quizImage.addEventListener('click', () => {
+            const randomIndex = Math.floor(Math.random() * questionsAndAnswers.length);
+            const { question, answer } = questionsAndAnswers[randomIndex];
+
+            questionElement.textContent = question;
+            answerElement.textContent = answer;
+        });
+    </script>
+</body>
+</html>
